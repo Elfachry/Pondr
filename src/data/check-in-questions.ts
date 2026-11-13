@@ -75,7 +75,6 @@ export const CHECK_IN_QUESTIONS: CheckInQuestion[] = [
     options: [
       { value: "today_tomorrow", label: "Today or tomorrow." },
       { value: "this_week", label: "Within this week." },
-      { value: "few_weeks", label: "Within the next few weeks." },
       { value: "this_month", label: "Within this month." },
       { value: "no_deadline", label: "There's no particular deadline." },
     ],
