@@ -38,7 +38,7 @@ export default function AddPage() {
     "w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-gray-900 focus:ring-2 focus:ring-gray-100 placeholder:text-gray-400";
 
   return (
-    <main className="min-h-screen bg-gray-50 pb-28">
+    <main className="min-h-screen pb-28">
       <div className="mx-auto max-w-xl px-5 py-12">
         {/* Header */}
         <div className="mb-8">

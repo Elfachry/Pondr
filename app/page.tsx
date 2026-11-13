@@ -8,7 +8,7 @@ export default function Home() {
   const waitingItems = MOCK_ITEMS.filter((item) => item.status === "waiting");
 
   return (
-    <main className="min-h-screen bg-gray-50 px-5 py-10 pb-28">
+    <main className="min-h-screen px-5 py-10 pb-28">
       <div className="mx-auto max-w-xl space-y-8">
         {/* Header */}
         <div>
