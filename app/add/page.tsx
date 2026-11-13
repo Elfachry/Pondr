@@ -101,11 +101,8 @@ export default function AddPage() {
 
           {/* Trigger */}
           <div>
-            <p className="mb-1 text-sm font-medium text-gray-800">
+            <p className="mb-2 text-sm font-medium text-gray-800">
               Why do you want it?
-            </p>
-            <p className="mb-4 text-xs text-gray-500">
-              Be honest. There's no wrong answer.
             </p>
 
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">

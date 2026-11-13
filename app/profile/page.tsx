@@ -1,3 +1,3 @@
-export default function AddPage() {
+export default function Profile() {
   return <main className="p-6">Profile</main>;
 }

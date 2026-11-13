@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { Item } from "@/types";
 import { TRIGGER_LABELS } from "@/utils/item-labels";
@@ -45,9 +46,12 @@ export default function ReadyItemCard({ item }: ReadyItemCardProps) {
         </p>
       </div>
 
-      <button className="mt-4 w-full rounded-xl bg-zinc-900 px-4 py-3 text-sm font-medium text-white transition hover:bg-zinc-700">
+      <Link
+        href={`/items/${item.id}/check-in`}
+        className="mt-4 block w-full rounded-xl bg-zinc-900 px-4 py-3 text-center text-sm font-medium text-white transition hover:bg-zinc-700"
+      >
         Check in
-      </button>
+      </Link>
     </div>
   );
 }

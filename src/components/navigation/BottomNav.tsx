@@ -24,6 +24,8 @@ const navItems = [
 
 export default function BottomNav() {
   const pathname = usePathname();
+  
+  if (pathname.endsWith("/check-in")) return null;
 
   return (
     <nav className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50">
