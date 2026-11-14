@@ -41,7 +41,6 @@ export default function CheckInFlow({ item }: CheckInFlowProps) {
   function handleSelect(value: string) {
     setAnswers((prev) => ({ ...prev, [question.id]: value }));
 
-    // The last question waits for an explicit "See result".
     if (isLast) return;
 
     clearTimer();

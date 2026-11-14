@@ -62,21 +62,13 @@ export const ANSWER_POINTS: Record<
 export type Points = Record<CheckInQuestionId, number>;
 
 export interface Scores {
-  /** Q1 + Q2 */
   necessity: number;
-  /** Q3 */
   practical: number;
-  /** Q5 + Q6 */
   desire: number;
-  /** Q4 */
   urgency: number;
-  /** Q7 */
   finances: number;
-  /** Urgency + finances */
   timing: number;
-  /** overall */
   overall: number;
-  /** Necessity + practical value */
   importance: number;
 }
 
