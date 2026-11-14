@@ -20,7 +20,6 @@ export function getRecommendation(
   const lowValue = N < c.letGo.lowNecessity && P < c.letGo.lowPractical;
   const letGo = lowValue && (points.persistence === 0 || S < c.letGo.weakScore);
 
-  // creating worthwhile
   const realNeed =
     points.necessity >= c.worthwhile.minNeedAnswerPoints &&
     N >= c.worthwhile.minNeed;
@@ -36,11 +35,9 @@ export function getRecommendation(
     points.urgency >= c.buyNow.minUrgencyPoints &&
     points.finances === c.buyNow.requiredFinancePoints;
 
-  // Evaluation order from letgo and worthwhile
   if (letGo) return "let_go";
   if (!worthwhile) return "rethink";
 
-  // Financial safeguard
   if (points.finances === 0) {
     return S >= c.planItMinScore ? "plan_it" : "rethink";
   }

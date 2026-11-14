@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ChevronLeft, X } from "lucide-react";
 import type { Item } from "@/types";
 import {
@@ -20,8 +21,8 @@ type PartialAnswers = Partial<Record<CheckInQuestionId, string>>;
 export default function CheckInFlow({ item }: CheckInFlowProps) {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<PartialAnswers>({});
-  const [finished, setFinished] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const router = useRouter();
 
   const total = CHECK_IN_QUESTIONS.length;
   const question = CHECK_IN_QUESTIONS[step];
@@ -56,29 +57,8 @@ export default function CheckInFlow({ item }: CheckInFlowProps) {
 
   function handleFinish() {
     if (!selected) return;
-
-    // TODO: run the rule-based recommendation and go to the result page.
-    console.log("Check-in answers:", { itemId: item.id, answers });
-    setFinished(true);
-  }
-
-  if (finished) {
-    return (
-      <div className="rounded-2xl border border-gray-200 bg-white p-6 text-center shadow-sm">
-        <h1 className="text-xl font-semibold text-gray-900">
-          All {total} questions answered
-        </h1>
-        <p className="mt-2 text-sm text-gray-500">
-          The result page for {item.name} comes next.
-        </p>
-        <Link
-          href="/"
-          className="mt-6 block w-full rounded-xl bg-zinc-900 px-4 py-3 text-center text-sm font-medium text-white transition hover:bg-zinc-700"
-        >
-          Back to my items
-        </Link>
-      </div>
-    );
+    const params = new URLSearchParams(answers as Record<string, string>);
+    router.push(`/items/${item.id}/result?${params.toString()}`);
   }
 
   return (
