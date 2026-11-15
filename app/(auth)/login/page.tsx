@@ -35,9 +35,24 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  function handleGoogle() {
-    // TODO (backend): start Google sign-in
-    console.log("Google sign-in");
+  async function handleGoogle() {
+    setLoading(true);
+    setError("");
+
+    const supabase = createClient();
+
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+
+    if (error){
+      console.error("Google Oauth error : ", error.message);
+      setError(error.message);
+      setLoading(false);
+    }
   }
 
   async function handleEmailSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -112,13 +127,19 @@ export default function LoginPage() {
               </div>
 
               <div className="space-y-3">
+                {error && (
+                  <p className="text-sm text-red-500" role = "alert">
+                    {error}
+                  </p>
+                )}
                 <button
                   type="button"
                   onClick={handleGoogle}
-                  className={outlineButton}
+                  disabled={loading}
+                  className={`${outlineButton} disabled:opacity-50`}
                 >
                   <GoogleIcon />
-                  Continue with Google
+                  {loading ? "Connecting..." : "continue with google"}
                 </button>
 
                 <button
