@@ -18,6 +18,7 @@ export interface Item {
   price: number;
   trigger: ItemTrigger;
   reason?: string;
+  imageUrl?: string;
   createdAt: string;
   reviewAt: string;
   status: ItemStatus;
