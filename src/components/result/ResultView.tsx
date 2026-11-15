@@ -94,7 +94,7 @@ export default function ResultView({
 
   return (
     <div className="space-y-6">
-      {/* 1. Item header: price is context only */}
+      {/* Item header */}
       <div>
         <p className="text-sm text-gray-500">Check-in result</p>
         <h1 className="text-2xl font-semibold tracking-tight text-gray-900">
@@ -103,7 +103,7 @@ export default function ResultView({
         <p className="mt-1 text-sm text-gray-400">{price}</p>
       </div>
 
-      {/* 2. Recommendation (score intentionally hidden in v1) */}
+      {/* Recommendation */}
       <div className={`rounded-2xl border p-7 ${style.card}`}>
         <p className={`text-sm font-medium ${style.eyebrow}`}>Pondr suggests</p>
         <p
@@ -113,7 +113,7 @@ export default function ResultView({
         </p>
       </div>
 
-      {/* 3. Why: up to 3 reasons + motivation note */}
+      {/* Reason */}
       <section className={cardClass}>
         <h2 className="mb-3 font-medium text-gray-900">Why</h2>
 
@@ -140,7 +140,7 @@ export default function ResultView({
         )}
       </section>
 
-      {/* 4. Priority map */}
+      {/* Priority map */}
       <section className={cardClass}>
         <h2 className="mb-3 font-medium text-gray-900">Priority map</h2>
 
@@ -187,13 +187,13 @@ export default function ResultView({
         </div>
       </section>
 
-      {/* 5. Suggested next step */}
+      {/* Suggested next step */}
       <section className={cardClass}>
         <h2 className="mb-2 font-medium text-gray-900">Suggested next step</h2>
         <p className="text-sm text-gray-600">{NEXT_STEPS[recommendation]}</p>
       </section>
 
-      {/* 6. Your decision (placeholders until storage exists) */}
+      {/* User decision */}
       <section>
         <p className="mb-1 text-sm font-medium text-gray-900">You decide</p>
         <p className="mb-3 text-sm text-gray-500">
