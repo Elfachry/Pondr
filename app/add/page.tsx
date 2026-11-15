@@ -1,14 +1,62 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ITEM_TRIGGERS, type ItemTrigger } from "@/types";
 import { TRIGGER_LABELS } from "@/utils/item-labels";
+
+const MAX_IMAGE_MB = 5;
+const ACCEPTED_IMAGE_TYPES = "image/jpeg,image/png,image/webp";
 
 export default function AddPage() {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [trigger, setTrigger] = useState<ItemTrigger | "">("");
   const [reason, setReason] = useState("");
+
+  const [image, setImage] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [imageError, setImageError] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const previewRef = useRef<string | null>(null);
+
+  // Free the preview URL when leaving the page
+  useEffect(() => {
+    return () => {
+      if (previewRef.current) URL.revokeObjectURL(previewRef.current);
+    };
+  }, []);
+
+  function applyImage(file: File | null) {
+    if (previewRef.current) URL.revokeObjectURL(previewRef.current);
+    previewRef.current = file ? URL.createObjectURL(file) : null;
+    setImage(file);
+    setPreviewUrl(previewRef.current);
+  }
+
+  function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!ACCEPTED_IMAGE_TYPES.split(",").includes(file.type)) {
+      setImageError("Please choose a JPG, PNG or WebP image.");
+      e.target.value = "";
+      return;
+    }
+    if (file.size > MAX_IMAGE_MB * 1024 * 1024) {
+      setImageError(`Image must be ${MAX_IMAGE_MB} MB or smaller.`);
+      e.target.value = "";
+      return;
+    }
+
+    setImageError("");
+    applyImage(file);
+  }
+
+  function removeImage() {
+    applyImage(null);
+    setImageError("");
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  }
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -20,6 +68,7 @@ export default function AddPage() {
       price: Number(price),
       trigger,
       reason,
+      image,
     };
 
     console.log("New item:", newItem);
@@ -45,6 +94,68 @@ export default function AddPage() {
           onSubmit={handleSubmit}
           className="space-y-7 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
         >
+          {/* Image (optional) */}
+          <div>
+            <p className="mb-2 text-sm font-medium text-gray-800">
+              Add a photo
+              <span className="ml-1 font-normal text-gray-400">(Optional)</span>
+            </p>
+
+            <input
+              ref={fileInputRef}
+              id="image"
+              type="file"
+              accept={ACCEPTED_IMAGE_TYPES}
+              onChange={handleImageChange}
+              className="sr-only"
+            />
+
+            {previewUrl ? (
+              <div className="flex items-center gap-4 rounded-xl border border-gray-200 p-3">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={previewUrl}
+                  alt="Selected item preview"
+                  className="h-20 w-20 rounded-lg object-cover"
+                />
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm text-gray-800">
+                    {image?.name}
+                  </p>
+                  <div className="mt-1 flex gap-3 text-sm">
+                    <label
+                      htmlFor="image"
+                      className="cursor-pointer text-gray-600 underline hover:text-gray-900"
+                    >
+                      Change
+                    </label>
+                    <button
+                      type="button"
+                      onClick={removeImage}
+                      className="text-gray-600 underline hover:text-gray-900"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <label
+                htmlFor="image"
+                className="flex cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border border-dashed border-gray-300 px-4 py-8 text-sm text-gray-500 transition hover:border-gray-500 hover:text-gray-700"
+              >
+                <span className="font-medium">Choose a photo</span>
+                <span className="text-xs text-gray-400">
+                  JPG, PNG or WebP, up to {MAX_IMAGE_MB} MB
+                </span>
+              </label>
+            )}
+
+            {imageError && (
+              <p className="mt-2 text-sm text-red-600">{imageError}</p>
+            )}
+          </div>
+
           {/* Item name */}
           <div>
             <label
