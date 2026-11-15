@@ -2,6 +2,7 @@ import type {
   CheckInAnswers,
   CheckInQuestionId,
 } from "@/data/check-in-questions";
+import { CONFIG } from "@/lib/pondr-config";
 import { CHECK_IN_QUESTION_IDS } from "@/data/check-in-questions";
 import type { Recommendation } from "@/lib/recommendation";
 import type { Points } from "@/lib/scoring";
@@ -95,10 +96,21 @@ export function getReasons(
   const wanted: Tone =
     recommendation === "buy_now" || recommendation === "plan_it" ? "+" : "-";
   const reasons: string[] = [];
+  const used = new Set<CheckInQuestionId>();
 
-  // Q7 always goes first when money is a problem.
-  if (answers.finances !== "spare") {
-    reasons.push(REASONS.finances[answers.finances].text);
+  const take = (id: CheckInQuestionId) => {
+    if (used.has(id)) return;
+    reasons.push(REASONS[id][answers[id]].text);
+    used.add(id);
+  };
+
+  if (answers.finances !== "spare") take("finances");
+
+  if (
+    recommendation === "plan_it" &&
+    points.urgency < CONFIG.buyNow.minUrgencyPoints
+  ) {
+    take("urgency");
   }
 
   const pool = CHECK_IN_QUESTION_IDS.map((id, order) => ({
@@ -107,7 +119,7 @@ export function getReasons(
     ...REASONS[id][answers[id]],
     strength: Math.abs(points[id] - 2.5),
   }))
-    .filter((e) => e.id !== "finances" || answers.finances === "spare")
+    .filter((e) => !used.has(e.id))
     .filter((e) => e.tone === wanted)
     .sort((a, b) => b.strength - a.strength || a.order - b.order);
 
