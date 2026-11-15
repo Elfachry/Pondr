@@ -3,6 +3,12 @@
 import { useEffect, useRef, useState } from "react";
 import { ITEM_TRIGGERS, type ItemTrigger } from "@/types";
 import { TRIGGER_LABELS } from "@/utils/item-labels";
+import { CONFIG } from "@/lib/pondr-config";
+import {
+  getDefaultWaitingDays,
+  getReviewDate,
+  isValidWaitingDays,
+} from "@/lib/waiting-days";
 
 const MAX_IMAGE_MB = 5;
 const ACCEPTED_IMAGE_TYPES = "image/jpeg,image/png,image/webp";
@@ -12,6 +18,7 @@ export default function AddPage() {
   const [price, setPrice] = useState("");
   const [trigger, setTrigger] = useState<ItemTrigger | "">("");
   const [reason, setReason] = useState("");
+  const [waitingInput, setWaitingInput] = useState("");
 
   const [image, setImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -58,17 +65,26 @@ export default function AddPage() {
     if (fileInputRef.current) fileInputRef.current.value = "";
   }
 
+  const priceNumber = Number(price);
+  const hasPrice = priceNumber > 0;
+  const suggestedDays = getDefaultWaitingDays(hasPrice ? priceNumber : 0);
+  const isCustomWait = waitingInput !== "";
+  const waitingDays = isCustomWait ? Number(waitingInput) : suggestedDays;
+  const waitingDaysInvalid = !isValidWaitingDays(waitingDays);
+
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    if (!trigger) return;
+    if (!trigger || waitingDaysInvalid) return;
 
     const newItem = {
       name,
-      price: Number(price),
+      price: priceNumber,
       trigger,
       reason,
       image,
+      waitingDays,
+      reviewAt: getReviewDate(waitingDays).toISOString(),
     };
 
     console.log("New item:", newItem);
@@ -257,6 +273,65 @@ export default function AddPage() {
               rows={3}
               className={`${inputClass} resize-none`}
             />
+          </div>
+
+          
+          {/* Waiting days */}
+          <div>
+            <p className="mb-2 text-sm font-medium text-gray-800">
+              How long will you wait before deciding?
+            </p>
+
+            <div
+              role="group"
+              aria-label="Waiting period"
+              className="grid grid-cols-4 gap-2"
+            >
+              {CONFIG.waitingDays.presets.map((days) => {
+                const selected = waitingDays === days;
+
+                return (
+                  <button
+                    key={days}
+                    type="button"
+                    aria-pressed={selected}
+                    onClick={() => setWaitingInput(String(days))}
+                    className={`rounded-xl border px-2 py-3 text-center text-sm transition ${
+                      selected
+                        ? "border-gray-900 bg-gray-50 font-medium text-gray-900"
+                        : "border-gray-200 text-gray-600 hover:border-gray-400"
+                    }`}
+                  >
+                    {days} days
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="mt-3 flex items-center gap-3">
+              <label htmlFor="waitingDays" className="text-sm text-gray-600">
+                Or choose your own
+              </label>
+
+              <div className="relative w-32">
+                <input
+                  id="waitingDays"
+                  type="number"
+                  inputMode="numeric"
+                  min={CONFIG.waitingDays.min}
+                  max={CONFIG.waitingDays.max}
+                  step={1}
+                  value={waitingInput}
+                  onChange={(e) => setWaitingInput(e.target.value)}
+                  placeholder={String(suggestedDays)}
+                  aria-invalid={waitingDaysInvalid}
+                  className={`${inputClass} pr-14`}
+                />
+                <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-sm text-gray-400">
+                  days
+                </span>
+              </div>
+            </div>
           </div>
 
           {/* Submit */}

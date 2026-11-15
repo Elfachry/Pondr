@@ -42,4 +42,19 @@ export const CONFIG = {
   },
 
   planItMinScore: 50,
+
+  waitingDays: {
+    min: 1,
+    max: 365,
+
+    presets: [3, 7, 14, 30],
+
+    tiers: [
+      { maxPrice: 99_999, days: 3 },
+      { maxPrice: 500_000, days: 7 },
+      { maxPrice: 2_000_000, days: 14 },
+    ],
+
+    aboveTiersDays: 30,
+  },
 } as const;
