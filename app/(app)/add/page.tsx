@@ -1,5 +1,8 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
+
 import { useEffect, useRef, useState } from "react";
 import { ITEM_TRIGGERS, type ItemTrigger } from "@/types";
 import { TRIGGER_LABELS } from "@/utils/item-labels";
@@ -14,6 +17,11 @@ const MAX_IMAGE_MB = 5;
 const ACCEPTED_IMAGE_TYPES = "image/jpeg,image/png,image/webp";
 
 export default function AddPage() {
+  const router = useRouter();
+
+  const [isSaving, setIsSaving] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [trigger, setTrigger] = useState<ItemTrigger | "">("");
@@ -72,22 +80,60 @@ export default function AddPage() {
   const waitingDays = isCustomWait ? Number(waitingInput) : suggestedDays;
   const waitingDaysInvalid = !isValidWaitingDays(waitingDays);
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    if (!trigger || waitingDaysInvalid) return;
+    if (!trigger || waitingDaysInvalid || isSaving) return;
 
-    const newItem = {
-      name,
-      price: priceNumber,
-      trigger,
-      reason,
-      image,
-      waitingDays,
-      reviewAt: getReviewDate(waitingDays).toISOString(),
-    };
+    setIsSaving(true);
+    setSubmitError("");
 
-    console.log("New item:", newItem);
+    try {
+      const supabase = createClient();
+
+      // Get the currently Logged-in user
+      const {
+        data: {user},
+        error: userError,
+      } = await supabase.auth.getUser();
+
+      if (userError) throw userError;
+
+      if (!user){
+        throw new Error("You must be logged in to add an item.");
+      }
+
+      // insert item ke supabase
+      const { error: insertError } = await supabase
+        .from("items")
+        .insert({
+          user_id: user.id,
+          name: name.trim(),
+          price: priceNumber,
+          trigger,
+          reason: reason.trim() || null,
+          review_at: getReviewDate(waitingDays).toISOString(),
+          image_url: null,
+        });
+
+        if (insertError) throw insertError;
+
+        // balik ke dashboard
+        router.push("/");
+        router.refresh();
+
+    } catch (error){
+      console.error("Failed to add item: ", error);
+
+      setSubmitError(
+        error instanceof Error
+          ? error.message
+          : "Something went wrong while saving your item."
+      );
+    } finally {
+      setIsSaving(false);
+    }
+
   }
 
   const inputClass =
@@ -337,10 +383,17 @@ export default function AddPage() {
           {/* Submit */}
           <button
             type="submit"
-            className="w-full rounded-xl bg-zinc-900 px-5 py-3.5 text-sm font-medium text-white transition hover:bg-gray-700 active:scale-[0.99]"
+            disabled={isSaving}
+            className="w-full rounded-xl bg-zinc-900 px-5 py-3.5 text-sm font-medium text-white transition hover:bg-gray-700 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
           >
-            Add to wishlist
+            {isSaving ? "Saving..." : "Add to wishlist"}
           </button>
+
+          {submitError && (
+            <p className="text-sm text-red-600" role="alert">
+              {submitError}
+            </p>
+          )}
         </form>
       </div>
     </main>

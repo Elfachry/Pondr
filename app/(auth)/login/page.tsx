@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ChevronLeft, Mail } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
 
 type Step = "choose" | "email" | "sent";
 
@@ -31,16 +32,52 @@ function GoogleIcon() {
 export default function LoginPage() {
   const [step, setStep] = useState<Step>("choose");
   const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  function handleGoogle() {
-    // TODO (backend): start Google sign-in
-    console.log("Google sign-in");
+  async function handleGoogle() {
+    setLoading(true);
+    setError("");
+
+    const supabase = createClient();
+
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+
+    if (error){
+      console.error("Google Oauth error : ", error.message);
+      setError(error.message);
+      setLoading(false);
+    }
   }
 
-  function handleEmailSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleEmailSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    // TODO (backend): send the sign-in email (add loading + error state)
-    console.log("Email sign-in:", email);
+
+    setLoading(true);
+    setError("");
+    
+    const supabase = createClient();
+
+    const { error } = await supabase.auth.signInWithOtp({
+      email, 
+      options : {
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+
+    setLoading(false);
+
+    if (error){
+      setError(error.message);
+      return;
+    }
+
+
     setStep("sent");
   }
 
@@ -90,13 +127,19 @@ export default function LoginPage() {
               </div>
 
               <div className="space-y-3">
+                {error && (
+                  <p className="text-sm text-red-500" role = "alert">
+                    {error}
+                  </p>
+                )}
                 <button
                   type="button"
                   onClick={handleGoogle}
-                  className={outlineButton}
+                  disabled={loading}
+                  className={`${outlineButton} disabled:opacity-50`}
                 >
                   <GoogleIcon />
-                  Continue with Google
+                  {loading ? "Connecting..." : "continue with google"}
                 </button>
 
                 <button
@@ -141,11 +184,17 @@ export default function LoginPage() {
                   className={inputClass}
                   required
                 />
+                {error && (
+                  <p className="text-sm text-red-500" role="alert">
+                    {error}
+                  </p>
+                )}
                 <button
                   type="submit"
-                  className="w-full rounded-xl bg-zinc-900 px-5 py-3.5 text-sm font-medium text-white transition hover:bg-gray-700 active:scale-[0.99]"
+                  disabled={loading}
+                  className="w-full rounded-xl bg-zinc-900 px-5 py-3.5 text-sm font-medium text-white transition hover:bg-gray-700 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  Continue
+                  {loading ? "Sending..." : "Continue"}
                 </button>
               </form>
             </>
