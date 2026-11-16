@@ -1,4 +1,4 @@
-import Link from "next/link";
+import DecisionActions from "@/components/result/DecisionActions";
 import type { Item } from "@/types";
 import {
   RECOMMENDATION_LABELS,
@@ -200,26 +200,7 @@ export default function ResultView({
           Pondr recommends. The final choice is yours.
         </p>
 
-        <div className="grid grid-cols-3 gap-2">
-          <Link
-            href="/" // TODO: set status to "bought"
-            className="rounded-xl bg-zinc-900 px-3 py-3 text-center text-sm font-medium text-white transition hover:bg-zinc-700"
-          >
-            Bought
-          </Link>
-          <Link
-            href="/" // TODO: push reviewAt forward
-            className="rounded-xl border border-gray-200 bg-white px-3 py-3 text-center text-sm text-gray-700 transition hover:border-gray-400"
-          >
-            Keep waiting
-          </Link>
-          <Link
-            href="/" // TODO: set status to "dropped" and record item.price
-            className="rounded-xl border border-gray-200 bg-white px-3 py-3 text-center text-sm text-gray-700 transition hover:border-gray-400"
-          >
-            Drop
-          </Link>
-        </div>
+        <DecisionActions itemId={item.id} />
 
         <p className="mt-3 text-center text-xs text-gray-400">
           Dropping this keeps {price} in your pocket.

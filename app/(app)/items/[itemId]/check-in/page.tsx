@@ -1,15 +1,12 @@
 import { Suspense } from "react";
-import { notFound } from "next/navigation";
-import { MOCK_ITEMS } from "@/data/mock-data";
+import { getItemById } from "@/lib/items";
 import CheckInFlow from "@/components/check-in/CheckInFlow";
 
 type Params = Promise<{ itemId: string }>;
 
 async function CheckInContent({ params }: { params: Params }) {
   const { itemId } = await params;
-  const item = MOCK_ITEMS.find((i) => i.id === itemId);
-
-  if (!item) notFound();
+  const item = await getItemById(itemId);
 
   return <CheckInFlow item={item} />;
 }

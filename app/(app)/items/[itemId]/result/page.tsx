@@ -1,6 +1,6 @@
 import { Suspense } from "react";
-import { notFound, redirect } from "next/navigation";
-import { MOCK_ITEMS } from "@/data/mock-data";
+import { redirect } from "next/navigation";
+import { getItemById } from "@/lib/items";
 import ResultView from "@/components/result/ResultView";
 import { evaluateCheckIn, parseAnswers } from "@/lib/check-in-result";
 import { getMotivationNote, getReasons } from "@/lib/reasons";
@@ -16,8 +16,7 @@ async function ResultContent({
   searchParams: SearchParams;
 }) {
   const { itemId } = await params;
-  const item = MOCK_ITEMS.find((i) => i.id === itemId);
-  if (!item) notFound();
+  const item = await getItemById(itemId);
 
   const answers = parseAnswers(await searchParams);
   if (!answers) redirect(`/items/${itemId}/check-in`);

@@ -5,8 +5,7 @@ import Link from "next/link";
 import { X } from "lucide-react";
 import type { Item } from "@/types";
 import { TRIGGER_LABELS } from "@/utils/item-labels";
-
-const DAY_MS = 24 * 60 * 60 * 1000;
+import { formatDaysLeft, getWaitProgress } from "@/lib/waiting-days";
 
 const formatDate = (iso: string) =>
   new Date(iso).toLocaleDateString("en-GB", {
@@ -14,8 +13,6 @@ const formatDate = (iso: string) =>
     month: "short",
     year: "numeric",
   });
-
-const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
 
 type Confirm = "urgent" | "delete" | null;
 
@@ -45,15 +42,7 @@ export default function ItemDetailModal({
   const isReady = item.status === "ready";
   const price = `Rp ${item.price.toLocaleString("id-ID")}`;
 
-  const createdMs = new Date(item.createdAt).getTime();
-  const reviewMs = new Date(item.reviewAt).getTime();
-  const totalMs = Math.max(1, reviewMs - createdMs);
-  const daysLeft = Math.max(0, Math.ceil((reviewMs - now) / DAY_MS));
-  const daysWaited = Math.max(0, Math.floor((now - createdMs) / DAY_MS));
-  const progress = Math.min(
-    100,
-    Math.max(0, ((now - createdMs) / totalMs) * 100),
-  );
+  const { daysLeft, progress } = getWaitProgress(item, now);
 
   const secondaryButton =
     "rounded-xl border border-gray-200 bg-white px-3 py-3 text-sm text-gray-700 transition hover:border-gray-400";
@@ -104,16 +93,10 @@ export default function ItemDetailModal({
 
           {/* Wait status */}
           <section>
-            {isReady ? (
-              <p className="text-sm text-gray-600">
-                You&apos;ve waited {plural(daysWaited, "day")}.
-              </p>
-            ) : (
+            {!isReady && (
               <>
                 <p className="mb-2 text-sm text-gray-600">
-                  {daysLeft === 0
-                    ? "Review date is today"
-                    : `${plural(daysLeft, "day")} left`}
+                  {formatDaysLeft(daysLeft)}
                 </p>
                 <div
                   role="progressbar"
@@ -131,7 +114,7 @@ export default function ItemDetailModal({
               </>
             )}
 
-            <dl className="mt-4 space-y-1 text-sm">
+            <dl className={`${isReady ? "" : "mt-4 "}space-y-1 text-sm`}>
               <div className="flex justify-between gap-4">
                 <dt className="text-gray-500">Added</dt>
                 <dd className="text-gray-900">{formatDate(item.createdAt)}</dd>
