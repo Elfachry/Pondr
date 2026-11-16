@@ -142,7 +142,11 @@ export default function ResultView({
 
       {/* Priority map */}
       <section className={cardClass}>
-        <h2 className="mb-3 font-medium text-gray-900">Priority map</h2>
+        <h2 className="font-medium text-gray-900">Priority map</h2>
+        <p className="my-3 text-sm text-gray-500">
+          Priority shows how important and urgent this item is for you.
+          <br /> It doesn't determine whether you should buy it.
+        </p>
 
         <div
           role="img"
@@ -194,15 +198,12 @@ export default function ResultView({
       </section>
 
       {/* User decision */}
-      <section>
-        <p className="mb-1 text-sm font-medium text-gray-900">You decide</p>
-        <p className="mb-3 text-sm text-gray-500">
-          Pondr recommends. The final choice is yours.
-        </p>
+      <section className="space-y-3">
+        <p className="text-sm font-medium text-gray-900">Your decision</p>
 
         <DecisionActions itemId={item.id} />
 
-        <p className="mt-3 text-center text-xs text-gray-400">
+        <p className="text-center text-xs text-gray-400">
           Dropping this keeps {price} in your pocket.
         </p>
       </section>

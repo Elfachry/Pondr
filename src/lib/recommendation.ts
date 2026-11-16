@@ -6,7 +6,7 @@ export type Recommendation = "buy_now" | "plan_it" | "rethink" | "let_go";
 export const RECOMMENDATION_LABELS: Record<Recommendation, string> = {
   buy_now: "Buy now",
   plan_it: "Plan it",
-  rethink: "Rethink",
+  rethink: "Question it",
   let_go: "Let go",
 };
 

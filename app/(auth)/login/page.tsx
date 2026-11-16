@@ -93,25 +93,23 @@ export default function LoginPage() {
 
   return (
     <main className="grid min-h-screen md:grid-cols-2">
-      {/* Left: hero section */}
-      <section className="flex flex-col justify-between gap-8 bg-zinc-900 px-6 py-8 text-white md:px-12 md:py-14">
-        <p className="text-lg font-semibold tracking-tight">Pondr</p>
+      {/* hero section */}
+<section className="flex flex-col gap-8 bg-zinc-900 px-6 py-8 text-white md:px-12 md:py-14">
+  <div className="space-y-6">
+    <h1 className="text-3xl font-semibold tracking-tight md:text-5xl">
+      Pondr your
+      <br />
+      Purchase.
+    </h1>
+    <p className="max-w-md text-sm text-zinc-400 md:text-base">
+      Pause, check in with yourself,
+      <br />
+      and spend on what actually matters.
+    </p>
+  </div>
+</section>
 
-        <div className="space-y-6">
-          <h1 className="text-3xl font-semibold tracking-tight md:text-5xl">
-            Think before
-            <br />
-            you buy.
-          </h1>
-          <p className="max-w-md text-sm text-zinc-400 md:text-base">
-            Pause, check in with yourself,
-            <br />
-            and spend on what actually matters.
-          </p>
-        </div>
-      </section>
-
-      {/* Right: sign in */}
+      {/* sign in */}
       <section className="flex items-center justify-center px-6 py-10 md:px-12">
         <div className="w-full max-w-sm space-y-6">
           {step === "choose" && (

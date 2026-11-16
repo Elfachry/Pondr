@@ -1,8 +1,10 @@
+import { connection } from "next/server";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { Item } from "@/types";
 
 export async function getItemById(itemId: string): Promise<Item> {
+  await connection();
   const supabase = await createClient();
 
   const {

@@ -69,9 +69,6 @@ export default function Home() {
           <h1 className="text-3xl font-semibold tracking-tight text-gray-900">
             My items
           </h1>
-          <p className="mt-2 text-sm text-gray-500">
-            Take your time before making a purchase.
-          </p>
         </div>
 
         <Suspense

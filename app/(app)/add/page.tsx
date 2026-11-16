@@ -13,6 +13,12 @@ import {
   isValidWaitingDays,
 } from "@/lib/waiting-days";
 
+const MAX_PRICE_DIGITS = 12;
+
+function formatThousands(digits: string): string {
+  return digits.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
 const MAX_IMAGE_MB = 5;
 const ACCEPTED_IMAGE_TYPES = "image/jpeg,image/png,image/webp";
 
@@ -34,7 +40,7 @@ export default function AddPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const previewRef = useRef<string | null>(null);
 
-  // Free the preview URL when leaving the page
+  // Free the preview when leaving the page
   useEffect(() => {
     return () => {
       if (previewRef.current) URL.revokeObjectURL(previewRef.current);
@@ -71,6 +77,14 @@ export default function AddPage() {
     applyImage(null);
     setImageError("");
     if (fileInputRef.current) fileInputRef.current.value = "";
+  }
+
+  function handlePriceChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const digits = e.target.value
+      .replace(/\D/g, "")
+      .replace(/^0+/, "")
+      .slice(0, MAX_PRICE_DIGITS);
+    setPrice(digits);
   }
 
   const priceNumber = Number(price);
@@ -155,22 +169,23 @@ export default function AddPage() {
   }
 
   const inputClass =
-    "w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-gray-900 focus:ring-2 focus:ring-gray-100 placeholder:text-gray-400";
+    "w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm outline-none transition focus:border-gray-900 focus:ring-2 focus:ring-gray-100 placeholder:text-gray-400";
 
   return (
     <main className="min-h-screen pb-28">
       <div className="mx-auto max-w-xl px-5 py-12">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-6">
           <h1 className="text-3xl font-semibold tracking-tight text-gray-900">
             Add an item
           </h1>
           <p className="mt-2 text-sm text-gray-500">
-            Before buying, let's understand why you want it.
+            let's understand why you want it.
           </p>
         </div>
 
         <form
+          autoComplete="off"
           onSubmit={handleSubmit}
           className="space-y-7 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
         >
@@ -222,7 +237,7 @@ export default function AddPage() {
             ) : (
               <label
                 htmlFor="image"
-                className="flex cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border border-dashed border-gray-300 px-4 py-8 text-sm text-gray-500 transition hover:border-gray-500 hover:text-gray-700"
+                className="flex cursor-pointer flex-col items-center justify-center gap-1 rounded-xl bg-gray-50 border border-dashed border-gray-300 px-4 py-8 text-sm text-gray-500 transition hover:border-gray-500 hover:text-gray-700"
               >
                 <span className="font-medium">Choose a photo</span>
                 <span className="text-xs text-gray-400">
@@ -270,10 +285,11 @@ export default function AddPage() {
               </span>
               <input
                 id="price"
-                type="number"
-                min="1"
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
+                type="text"
+                inputMode="numeric"
+                autoComplete="off"
+                value={formatThousands(price)}
+                onChange={handlePriceChange}
                 placeholder="0"
                 className={`${inputClass} pl-12`}
                 required
@@ -295,10 +311,10 @@ export default function AddPage() {
                   <label
                     key={itemTrigger}
                     className={`flex cursor-pointer items-center gap-3 rounded-xl border p-3 text-sm transition ${
-                      selected
-                        ? "border-gray-900 bg-gray-50 text-gray-900"
-                        : "border-gray-200 text-gray-600 hover:border-gray-400"
-                    }`}
+  selected
+    ? "border-gray-300 bg-gray-100 text-gray-900"
+    : "border-gray-200 bg-gray-50 text-gray-600 hover:border-gray-300"
+}`}
                   >
                     <input
                       type="radio"
@@ -359,11 +375,11 @@ export default function AddPage() {
                     type="button"
                     aria-pressed={selected}
                     onClick={() => setWaitingInput(String(days))}
-                    className={`rounded-xl border px-2 py-3 text-center text-sm transition ${
-                      selected
-                        ? "border-gray-900 bg-gray-50 font-medium text-gray-900"
-                        : "border-gray-200 text-gray-600 hover:border-gray-400"
-                    }`}
+                    className={`cursor-pointer gap-3 rounded-xl border p-3 text-sm transition ${
+  selected
+    ? "border-gray-400 bg-gray-200 text-gray-900"
+    : "border-gray-200 bg-gray-50 text-gray-600 hover:border-gray-300"
+}`}
                   >
                     {days} days
                   </button>
@@ -376,7 +392,7 @@ export default function AddPage() {
                 Or choose your own
               </label>
 
-              <div className="relative w-32">
+              <div className="relative w-20">
                 <input
                   id="waitingDays"
                   type="number"
@@ -388,7 +404,7 @@ export default function AddPage() {
                   onChange={(e) => setWaitingInput(e.target.value)}
                   placeholder={String(suggestedDays)}
                   aria-invalid={waitingDaysInvalid}
-                  className={`${inputClass} pr-14`}
+                  className={`${inputClass} h-10 pr-8 no-spinner`}
                 />
                 <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-sm text-gray-400">
                   days
@@ -401,7 +417,7 @@ export default function AddPage() {
           <button
             type="submit"
             disabled={isSaving}
-            className="w-full rounded-xl bg-zinc-900 px-5 py-3.5 text-sm font-medium text-white transition hover:bg-gray-700 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
+            className="w-full rounded-xl cursor-pointer bg-zinc-900 px-5 py-3.5 text-sm font-medium text-white transition hover:bg-zinc-700 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
           >
             {isSaving ? "Saving..." : "Add to wishlist"}
           </button>

@@ -159,7 +159,7 @@ export default function ItemsBoard({ initialItems }: ItemsBoardProps) {
 
       {/* Empty state */}
       {readyItems.length === 0 && waitingItems.length === 0 && (
-        <div className="rounded-2xl border border-gray-200 bg-white p-8 text-center">
+        <div className="rounded-2xl border border-gray-200 bg-gray-50 p-8 text-center">
           <h2 className="font-medium text-gray-900">
             Nothing here yet
           </h2>

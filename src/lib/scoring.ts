@@ -75,10 +75,10 @@ export interface Scores {
 export type Quadrant = "A" | "B" | "C" | "D";
 
 export const QUADRANT_LABELS: Record<Quadrant, string> = {
-  A: "Act now",
-  B: "Schedule",
-  C: "Question it",
-  D: "Skip",
+  A: "I",
+  B: "II",
+  C: "III",
+  D: "IV",
 };
 
 export function getPoints(answers: Partial<CheckInAnswers>): Points {

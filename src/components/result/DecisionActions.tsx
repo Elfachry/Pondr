@@ -61,25 +61,25 @@ export default function DecisionActions({ itemId }: DecisionActionsProps) {
           type="button"
           disabled={isSaving}
           onClick={() => save({ status: "bought" })}
-          className="rounded-xl bg-zinc-900 px-3 py-3 text-center text-sm font-medium text-white transition hover:bg-zinc-700 disabled:opacity-40"
+          className="rounded-xl border border-gray-300 bg-gray-200 px-3 py-3 text-center text-sm font-medium text-gray-800 transition hover:bg-gray-300 disabled:opacity-40"
         >
-          Bought
+          Buy item
         </button>
+
         <button
           type="button"
           disabled={isSaving}
           onClick={() => setAskingDays(true)}
-          className={`rounded-xl border bg-white px-3 py-3 text-center text-sm text-gray-700 transition hover:border-gray-400 disabled:opacity-40 ${
-            askingDays ? "border-gray-900" : "border-gray-200"
-          }`}
+          className="rounded-xl border border-gray-300 bg-gray-200 px-3 py-3 text-center text-sm font-medium text-gray-800 transition hover:bg-gray-300 disabled:opacity-40"
         >
           Keep waiting
         </button>
+
         <button
           type="button"
           disabled={isSaving}
           onClick={() => save({ status: "dropped" })}
-          className="rounded-xl border border-gray-200 bg-white px-3 py-3 text-center text-sm text-gray-700 transition hover:border-gray-400 disabled:opacity-40"
+          className="rounded-xl border border-gray-300 bg-gray-200 px-3 py-3 text-center text-sm font-medium text-gray-800 transition hover:bg-gray-300 disabled:opacity-40"
         >
           Drop
         </button>

@@ -36,7 +36,7 @@ export default function CheckInFlow({ item }: CheckInFlowProps) {
     }
   }
 
-  // Don't fire a pending "next" after leaving the page.
+  // Don't fire next after leaving the page.
   useEffect(() => clearTimer, []);
 
   function handleSelect(value: string) {
@@ -129,10 +129,10 @@ export default function CheckInFlow({ item }: CheckInFlowProps) {
                 role="radio"
                 aria-checked={isSelected}
                 onClick={() => handleSelect(option.value)}
-                className={`flex w-full items-center gap-3 rounded-xl border p-3 text-left text-sm transition ${
+                className={`flex w-full items-center gap-3 rounded-xl border p-3 text-left text-sm transition cursor-pointer ${
                   isSelected
-                    ? "border-gray-900 bg-gray-50 text-gray-900"
-                    : "border-gray-200 text-gray-600 hover:border-gray-400"
+                    ? "border-gray-400 bg-gray-200 text-gray-900"
+                    : "border-gray-200 bg-gray-100 text-gray-700 hover:border-gray-400"
                 }`}
               >
                 {option.label}
