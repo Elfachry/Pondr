@@ -145,57 +145,6 @@ quadrantChart
 
 ---
 
-## 🎒 Scope
-
-**P0 · Must build**
-- [ ] Add item (name, price, rupiah format as you type)
-- [ ] Optional note + one-tap trigger chip *(function · friends have it · on sale · looks cool)*
-- [ ] Waiting room with countdowns + "Ready to review"
-- [ ] Check-in flow (~5 questions)
-- [ ] Result screen: outcome, quadrant map, reasons, cost per use, next steps
-- [ ] "Not spent" counter + bought / dropped / waiting counts
-- [ ] Settings: monthly free money
-- [ ] Data saved on device
-
-**P1 · Stretch**
-- [ ] Near-the-border flag
-- [ ] Share card: *"I waited 14 days and did not spend Rp510.000."*
-- [ ] Email reminder, screenshot/link attach, export/import
-- [ ] "Still glad you bought it?" follow-up
-
-**P2 · Roadmap**
-- [ ] Read price from screenshot
-- [ ] Price-drop alerts
-- [ ] Push / WhatsApp reminders
-- [ ] Accounts + sync
-
-**Not doing (for now):** bank connection, expense tracking, social features, telling users what to do.
-
----
-
-## 🧪 How We Check It Works
-
-| Metric | Target |
-|---|---|
-| ⚡ Capture speed | Save item < 10 seconds |
-| 🔁 Follow-through | Saved items reach check-in |
-| 🌱 Wanting less | Share of items dropped or extended, not bought |
-| 🤝 Outcome agreement | Ask 10–15 testers: result match your gut? |
-| 💰 Total not spent | Sum across all testers |
-
-After test: look at disagreements → tune weights → write down what changed.
-
----
-
-## 🪞 Honest Notes
-
-- **Result = recommendation, not verdict.** Based on self-reported answers. App show its reasons. You decide.
-- **"Not spent" ≠ "saved".** It is sum of dropped items. Maybe you never would have bought. App label it that way.
-- **Weights are guesses for now.** Testing will tune them.
-- **Wishlists not new.** Difference is the **cooling-off + decision**, not the list.
-
----
-
 <div align="center">
 
 **Rethinkr** · Draft v0.1 · Hackathon: Finance & Lifestyle
