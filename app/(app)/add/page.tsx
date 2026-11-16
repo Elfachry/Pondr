@@ -93,47 +93,65 @@ export default function AddPage() {
 
       // Get the currently Logged-in user
       const {
-        data: {user},
+        data: { user },
         error: userError,
       } = await supabase.auth.getUser();
 
       if (userError) throw userError;
 
-      if (!user){
+      if (!user) {
         throw new Error("You must be logged in to add an item.");
       }
 
-      // insert item ke supabase
-      const { error: insertError } = await supabase
-        .from("items")
-        .insert({
-          user_id: user.id,
-          name: name.trim(),
-          price: priceNumber,
-          trigger,
-          reason: reason.trim() || null,
-          review_at: getReviewDate(waitingDays).toISOString(),
-          image_url: null,
-        });
+      let imageUrl: string | null = null;
 
-        if (insertError) throw insertError;
+      if (image) {
+        const fileExt = image.name.split(".").pop()?.toLowerCase() || "jpg";
+        const filePath = `${user.id}/${crypto.randomUUID()}.${fileExt}`;
 
-        // balik ke dashboard
-        router.push("/");
-        router.refresh();
+        const { error: uploadError } = await supabase.storage
+          .from("item-images")
+          .upload(filePath, image, {
+            contentType: image.type,
+            upsert: false,
+          });
 
-    } catch (error){
+        if (uploadError) throw uploadError;
+
+        const { data: publicUrlData } = supabase.storage
+          .from("item-images")
+          .getPublicUrl(filePath);
+
+        imageUrl = publicUrlData.publicUrl;
+      }
+
+      // Insert item ke supabase
+      const { error: insertError } = await supabase.from("items").insert({
+        user_id: user.id,
+        name: name.trim(),
+        price: priceNumber,
+        trigger,
+        reason: reason.trim() || null,
+        review_at: getReviewDate(waitingDays).toISOString(),
+        image_url: imageUrl,
+      });
+
+      if (insertError) throw insertError;
+
+      // balik ke dashboard
+      router.push("/");
+      router.refresh();
+    } catch (error) {
       console.error("Failed to add item: ", error);
 
       setSubmitError(
         error instanceof Error
           ? error.message
-          : "Something went wrong while saving your item."
+          : "Something went wrong while saving your item.",
       );
     } finally {
       setIsSaving(false);
     }
-
   }
 
   const inputClass =
@@ -321,7 +339,6 @@ export default function AddPage() {
             />
           </div>
 
-          
           {/* Waiting days */}
           <div>
             <p className="mb-2 text-sm font-medium text-gray-800">
