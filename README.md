@@ -134,17 +134,6 @@ quadrantChart
 
 ---
 
-## 🖼️ Screens
-
-```
-┌─────────┐   ┌─────────┐   ┌─────────┐   ┌─────────┐   ┌─────────┐
-│ ➕ ADD  │ → │ ⏳ WAIT │ → │ 🧐 CHECK│ → │ 🎯 RESULT│ → │ 💰 SAVED│
-│  item   │   │  room   │   │   in    │   │ + map   │   │ summary │
-└─────────┘   └─────────┘   └─────────┘   └─────────┘   └─────────┘
-```
-
----
-
 <div align="center">
 
 **Rethinkr** · Draft v0.1 · Hackathon: Finance & Lifestyle
