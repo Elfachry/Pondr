@@ -1,10 +1,13 @@
+import { Suspense } from "react";
+import { connection } from "next/server";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { Item } from "@/types";
 
 import ItemsBoard from "@/components/items/ItemsBoard";
 
-export default async function Home() {
+async function ItemsContent() {
+  await connection();
   const supabase = await createClient();
 
   // get the currently logged-in user
@@ -54,6 +57,10 @@ export default async function Home() {
       reviewAt: row.review_at,
       status: row.status as Item["status"],
     }));
+  return <ItemsBoard initialItems={items} />;
+}
+
+export default function Home() {
   return (
     <main className="min-h-screen px-5 py-10 pb-28">
       <div className="mx-auto max-w-xl space-y-8">
@@ -67,7 +74,11 @@ export default async function Home() {
           </p>
         </div>
 
-        <ItemsBoard initialItems={items} />
+        <Suspense
+          fallback={<p className="text-sm text-gray-500">Loading...</p>}
+        >
+          <ItemsContent />
+        </Suspense>
       </div>
     </main>
   );
