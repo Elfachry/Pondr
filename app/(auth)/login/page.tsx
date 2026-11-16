@@ -48,7 +48,7 @@ export default function LoginPage() {
       },
     });
 
-    if (error){
+    if (error) {
       console.error("Google Oauth error : ", error.message);
       setError(error.message);
       setLoading(false);
@@ -60,23 +60,22 @@ export default function LoginPage() {
 
     setLoading(true);
     setError("");
-    
+
     const supabase = createClient();
 
     const { error } = await supabase.auth.signInWithOtp({
-      email, 
-      options : {
+      email,
+      options: {
         emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
     });
 
     setLoading(false);
 
-    if (error){
+    if (error) {
       setError(error.message);
       return;
     }
-
 
     setStep("sent");
   }
@@ -106,7 +105,7 @@ export default function LoginPage() {
           </h1>
           <p className="max-w-md text-sm text-zinc-400 md:text-base">
             Pause, check in with yourself,
-            <br /> 
+            <br />
             and spend on what actually matters.
           </p>
         </div>
@@ -128,7 +127,7 @@ export default function LoginPage() {
 
               <div className="space-y-3">
                 {error && (
-                  <p className="text-sm text-red-500" role = "alert">
+                  <p className="text-sm text-red-500" role="alert">
                     {error}
                   </p>
                 )}
@@ -144,8 +143,9 @@ export default function LoginPage() {
 
                 <button
                   type="button"
-                  onClick={() => setStep("email")}
-                  className={outlineButton}
+                  disabled
+                  title="Email sign-in is temporarily unavailable due to Supabase's email sending limit."
+                  className={`${outlineButton} cursor-not-allowed opacity-50`}
                 >
                   <Mail size={20} />
                   Continue with email
