@@ -16,6 +16,18 @@ export default async function Home() {
     redirect("/login");
   }
 
+  // check if item ready
+  const { error: readyError } = await supabase
+    .from("items")
+    .update({ status: "ready" })
+    .eq("user_id", user.id)
+    .eq("status", "waiting")
+    .lte("review_at", new Date().toISOString());
+
+  if (readyError) {
+    console.error("Failed to mark due items as ready: ", readyError);
+  }
+
   // fetch hanya item milik user saja
   const { data, error } = await supabase
     .from("items")

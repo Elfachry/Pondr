@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import type { Item } from "@/types";
 import { TRIGGER_LABELS } from "@/utils/item-labels";
+import { formatDaysLeft, getWaitProgress } from "@/lib/waiting-days";
 
 interface WaitingItemCardProps {
   item: Item;
@@ -13,19 +14,13 @@ export default function WaitingItemCard({
   item,
   onOpen,
 }: WaitingItemCardProps) {
-  const [waitingDays, setWaitingDays] = useState<number | null>(null);
+  const [now, setNow] = useState<number | null>(null);
 
   useEffect(() => {
-    const days = Math.max(
-      0,
-      Math.floor(
-        (Date.now() - new Date(item.createdAt).getTime()) /
-          (1000 * 60 * 60 * 24),
-      ),
-    );
+    setNow(Date.now());
+  }, []);
 
-    setWaitingDays(days);
-  }, [item.createdAt]);
+  const wait = now === null ? null : getWaitProgress(item, now);
 
   return (
     <div className="relative rounded-2xl border border-gray-200 bg-white p-5 transition hover:border-gray-300">
@@ -46,7 +41,7 @@ export default function WaitingItemCard({
             </span>
 
             <span className="text-xs text-gray-400">
-              {waitingDays === null ? " " : `${waitingDays} days waiting`}
+              {wait === null ? " " : formatDaysLeft(wait.daysLeft)}
             </span>
           </div>
         </div>
@@ -54,6 +49,22 @@ export default function WaitingItemCard({
         <p className="shrink-0 text-sm font-medium text-gray-700">
           Rp {item.price.toLocaleString("id-ID")}
         </p>
+      </div>
+
+      <div className="mt-4">
+        <div
+          role="progressbar"
+          aria-label="Waiting progress"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={Math.round(wait?.progress ?? 0)}
+          className="h-1.5 w-full overflow-hidden rounded-full bg-gray-200"
+        >
+          <div
+            className="h-full rounded-full bg-zinc-900"
+            style={{ width: `${wait?.progress ?? 0}%` }}
+          />
+        </div>
       </div>
     </div>
   );
